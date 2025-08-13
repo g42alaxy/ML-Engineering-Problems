@@ -1,0 +1,29 @@
+# Dockerfile
+FROM debian:stable-slim
+
+# Utilities 
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    bash \
+    grep \
+    sed \
+    gawk \
+    coreutils \
+    ca-certificates \
+    wget \
+ && rm -rf /var/lib/apt/lists/*
+
+
+# Working folder 
+WORKDIR /usr/src/app
+
+# Coping scripts and downloading Dracula's .txt
+COPY scripts/ /usr/local/bin/
+RUN chmod +x /usr/local/bin/word_count.sh /usr/local/bin/top10_create_files.sh
+
+RUN wget https://raw.githubusercontent.com/benbrandt/cs50/master/pset5/texts/dracula.txt
+RUN mkdir /data
+RUN mv dracula.txt /data/dracula.txt
+
+# Keeping container awake with sleep
+CMD ["bash", "-lc", "sleep infinity"]
